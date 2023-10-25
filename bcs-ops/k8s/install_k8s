@@ -42,85 +42,92 @@ if [ -z "${goversion}" ];then
   job_fail "get go version failed, configure etcd failed"
 fi
 
+mkdir /tmp/backup
+cp /etc/kubernetes/manifests/* /tmp/backup
+cp /etc/kubernetes/manifests/* ./
 pod_files=(etcd.yaml kube-apiserver.yaml kube-controller-manager.yaml kube-scheduler.yaml)
 
 for pod_file in ${pod_files[@]};do
   if [[ ${goversion} -le 15 ]] || [[ ${goversion} -ge 12 ]];then
-    if ! grep GODEBUG /etc/kubernetes/manifests/${pod_file};then
-      if [[ $(yq '.spec.containers[0].env' /etc/kubernetes/manifests/${pod_file}) != "null" ]];then
-        env_length=$(yq '.spec.containers[0].env|to_entries|length'  /etc/kubernetes/manifests/${pod_file})
-        yq -i '.spec.containers[0].env['${env_length}']={"name":"GODEBUG", "value":"madvdontneed=1"}' /etc/kubernetes/manifests/${pod_file}
+    if ! grep GODEBUG ./${pod_file};then
+      if [[ $(yq '.spec.containers[0].env' ./${pod_file}) != "null" ]];then
+        env_length=$(yq '.spec.containers[0].env|to_entries|length'  ./${pod_file})
+        yq -i '.spec.containers[0].env['${env_length}']={"name":"GODEBUG", "value":"madvdontneed=1"}' ./${pod_file}
       else
-        yq -i '.spec.containers[0].env[0]={"name":"GODEBUG", "value":"madvdontneed=1"}' /etc/kubernetes/manifests/${pod_file}
+        yq -i '.spec.containers[0].env[0]={"name":"GODEBUG", "value":"madvdontneed=1"}' ./${pod_file}
       fi
     fi
   fi
 done
 
-if ! grep -v "^#" /etc/kubernetes/manifests/kube-apiserver.yaml|grep max-mutating-requests-inflight;then
-    yq -i '.spec.containers[0].command += "--max-mutating-requests-inflight=1000"' /etc/kubernetes/manifests/kube-apiserver.yaml
+if ! grep -v "^#" ./kube-apiserver.yaml|grep max-mutating-requests-inflight;then
+    yq -i '.spec.containers[0].command += "--max-mutating-requests-inflight=1000"' ./kube-apiserver.yaml
 else
-    if ! grep max-mutating-requests-inflight=1000 /etc/kubernetes/manifests/kube-apiserver.yaml;then
-      element_index=$(yq '.spec.containers[0].command|to_entries'  /etc/kubernetes/manifests/kube-apiserver.yaml|yq '.[]|select (.value|test("max-mutating-requests-inflight")).key')
-      yq -i '.spec.containers[0].command['${element_index}']="--max-mutating-requests-inflight=1000"' /etc/kubernetes/manifests/kube-apiserver.yaml
+    if ! grep max-mutating-requests-inflight=1000 ./kube-apiserver.yaml;then
+      element_index=$(yq '.spec.containers[0].command|to_entries'  ./kube-apiserver.yaml|yq '.[]|select (.value|test("max-mutating-requests-inflight")).key')
+      yq -i '.spec.containers[0].command['${element_index}']="--max-mutating-requests-inflight=1000"' ./kube-apiserver.yaml
     fi
 fi
 
-if ! grep -v "^#" /etc/kubernetes/manifests/kube-apiserver.yaml |grep max-requests-inflight;then
-    yq -i '.spec.containers[0].command += "--max-requests-inflight=3000"' /etc/kubernetes/manifests/kube-apiserver.yaml
+if ! grep -v "^#" ./kube-apiserver.yaml |grep max-requests-inflight;then
+    yq -i '.spec.containers[0].command += "--max-requests-inflight=3000"' ./kube-apiserver.yaml
 else
-    if ! grep max-requests-inflight=3000 /etc/kubernetes/manifests/kube-apiserver.yaml ;then
-      element_index=$(yq '.spec.containers[0].command|to_entries'  /etc/kubernetes/manifests/kube-apiserver.yaml|yq '.[]|select (.value|test("max-mutating-requests-inflight")).key')
-      yq -i '.spec.containers[0].command['${element_index}']="--max-requests-inflight=3000"' /etc/kubernetes/manifests/kube-apiserver.yaml
+    if ! grep max-requests-inflight=3000 ./kube-apiserver.yaml ;then
+      element_index=$(yq '.spec.containers[0].command|to_entries'  ./kube-apiserver.yaml|yq '.[]|select (.value|test("max-mutating-requests-inflight")).key')
+      yq -i '.spec.containers[0].command['${element_index}']="--max-requests-inflight=3000"' ./kube-apiserver.yaml
     fi
 fi
 
-if ! grep -v "^#" /etc/kubernetes/manifests/kube-controller-manager.yaml|grep kube-api-qps;then
-    yq -i '.spec.containers[0].command += "--kube-api-qps=300"' /etc/kubernetes/manifests/kube-controller-manager.yaml
+if ! grep -v "^#" ./kube-controller-manager.yaml|grep kube-api-qps;then
+    yq -i '.spec.containers[0].command += "--kube-api-qps=300"' ./kube-controller-manager.yaml
 else
-    if ! grep kube-api-qps=300 /etc/kubernetes/manifests/kube-controller-manager.yaml ;then
-      element_index=$(yq '.spec.containers[0].command|to_entries'  /etc/kubernetes/manifests/kube-controller-manager.yaml|yq '.[]|select (.value|test("kube-api-qps")).key')
-      yq -i '.spec.containers[0].command['${element_index}']="--kube-api-qps=300"' /etc/kubernetes/manifests/kube-controller-manager.yaml
+    if ! grep kube-api-qps=300 ./kube-controller-manager.yaml ;then
+      element_index=$(yq '.spec.containers[0].command|to_entries'  ./kube-controller-manager.yaml|yq '.[]|select (.value|test("kube-api-qps")).key')
+      yq -i '.spec.containers[0].command['${element_index}']="--kube-api-qps=300"' ./kube-controller-manager.yaml
     fi
 fi
 
-if ! grep -v "^#" /etc/kubernetes/manifests/kube-controller-manager.yaml |grep kube-api-burst;then
-    yq -i '.spec.containers[0].command += "--kube-api-burst=400"' /etc/kubernetes/manifests/kube-controller-manager.yaml
+if ! grep -v "^#" ./kube-controller-manager.yaml |grep kube-api-burst;then
+    yq -i '.spec.containers[0].command += "--kube-api-burst=400"' ./kube-controller-manager.yaml
 else
-    if ! grep kube-api-burst=400 /etc/kubernetes/manifests/kube-controller-manager.yaml;then
-      element_index=$(yq '.spec.containers[0].command|to_entries'  /etc/kubernetes/manifests/kube-controller-manager.yaml|yq '.[]|select (.value|test("kube-api-burst")).key')
-      yq -i '.spec.containers[0].command['${element_index}']="--kube-api-burst=400"' /etc/kubernetes/manifests/kube-controller-manager.yaml
+    if ! grep kube-api-burst=400 ./kube-controller-manager.yaml;then
+      element_index=$(yq '.spec.containers[0].command|to_entries'  ./kube-controller-manager.yaml|yq '.[]|select (.value|test("kube-api-burst")).key')
+      yq -i '.spec.containers[0].command['${element_index}']="--kube-api-burst=400"' ./kube-controller-manager.yaml
     fi
 fi
 
-if ! grep -v "^#" /etc/kubernetes/manifests/kube-controller-manager.yaml|grep terminated-pod-gc-threshold;then
-    yq -i '.spec.containers[0].command += "--terminated-pod-gc-threshold=12500"' /etc/kubernetes/manifests/kube-controller-manager.yaml
+if ! grep -v "^#" ./kube-controller-manager.yaml|grep terminated-pod-gc-threshold;then
+    yq -i '.spec.containers[0].command += "--terminated-pod-gc-threshold=12500"' ./kube-controller-manager.yaml
 else
-    if ! grep terminated-pod-gc-threshold=12500 /etc/kubernetes/manifests/kube-controller-manager.yaml;then
-      element_index=$(yq '.spec.containers[0].command|to_entries'  /etc/kubernetes/manifests/kube-controller-manager.yaml|yq '.[]|select (.value|test("terminated-pod-gc-threshold")).key')
-      yq -i '.spec.containers[0].command['${element_index}']="--terminated-pod-gc-threshold=12500"' /etc/kubernetes/manifests/kube-controller-manager.yaml
+    if ! grep terminated-pod-gc-threshold=12500 ./kube-controller-manager.yaml;then
+      element_index=$(yq '.spec.containers[0].command|to_entries'  ./kube-controller-manager.yaml|yq '.[]|select (.value|test("terminated-pod-gc-threshold")).key')
+      yq -i '.spec.containers[0].command['${element_index}']="--terminated-pod-gc-threshold=12500"' ./kube-controller-manager.yaml
     fi
 fi
 
-if ! grep -v "^#" /etc/kubernetes/manifests/kube-scheduler.yaml|grep kube-api-qps;then
-    yq -i '.spec.containers[0].command += "--kube-api-qps=300"' /etc/kubernetes/manifests/kube-scheduler.yaml
+if ! grep -v "^#" ./kube-scheduler.yaml|grep kube-api-qps;then
+    yq -i '.spec.containers[0].command += "--kube-api-qps=300"' ./kube-scheduler.yaml
 else
-    if ! grep kube-api-qps=300 /etc/kubernetes/manifests/kube-scheduler.yaml;then
-      element_index=$(yq '.spec.containers[0].command|to_entries'  /etc/kubernetes/manifests/kube-scheduler.yaml|yq '.[]|select (.value|test("kube-api-qps")).key')
-      yq -i '.spec.containers[0].command['${element_index}']="--kube-api-qps=300"' /etc/kubernetes/manifests/kube-scheduler.yaml
+    if ! grep kube-api-qps=300 ./kube-scheduler.yaml;then
+      element_index=$(yq '.spec.containers[0].command|to_entries'  ./kube-scheduler.yaml|yq '.[]|select (.value|test("kube-api-qps")).key')
+      yq -i '.spec.containers[0].command['${element_index}']="--kube-api-qps=300"' ./kube-scheduler.yaml
     fi
 fi
 
-if ! grep -v "^#" /etc/kubernetes/manifests/kube-scheduler.yaml |grep kube-api-burst;then
-    yq -i '.spec.containers[0].command += "--kube-api-burst=400"' /etc/kubernetes/manifests/kube-scheduler.yaml
+if ! grep -v "^#" ./kube-scheduler.yaml |grep kube-api-burst;then
+    yq -i '.spec.containers[0].command += "--kube-api-burst=400"' ./kube-scheduler.yaml
 else
-    if ! grep kube-api-burst=400 /etc/kubernetes/manifests/kube-scheduler.yaml;then
-      element_index=$(yq '.spec.containers[0].command|to_entries'  /etc/kubernetes/manifests/kube-scheduler.yaml|yq '.[]|select (.value|test("kube-api-burst")).key')
-      yq -i '.spec.containers[0].command['${element_index}']="--kube-api-burst=400"' /etc/kubernetes/manifests/kube-scheduler.yaml
+    if ! grep kube-api-burst=400 ./kube-scheduler.yaml;then
+      element_index=$(yq '.spec.containers[0].command|to_entries'  ./kube-scheduler.yaml|yq '.[]|select (.value|test("kube-api-burst")).key')
+      yq -i '.spec.containers[0].command['${element_index}']="--kube-api-burst=400"' ./kube-scheduler.yaml
     fi
 fi
 
-sleep 20
+for pod_file in ${pod_files[@]};do
+  cp ./${pod_file} /etc/kubernetes/manifests/
+done
+
+sleep 30
 pods=(etcd kube-apiserver kube-controller-manager kube-scheduler)
 for pod in ${pods[@]};do
   case "${CRI_TYPE,,}" in
