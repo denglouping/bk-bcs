@@ -146,7 +146,9 @@ IPv6EOF
 ---
 EOF
 
-  k8s::config_master_vip add false ${EXTERNAL_VIP},${EXTERNAL_HOST} ${config_file}
+  if [[ -n "${EXTERNAL_VIP}" ]] || [[ -n "${EXTERNAL_HOST}" ]];then
+    k8s::config_master_vip add false ${EXTERNAL_VIP},${EXTERNAL_HOST} ${config_file}
+  fi
 }
 
 render_kubelet() {
