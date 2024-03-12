@@ -93,7 +93,7 @@ init_env() {
   K8S_CNI=${K8S_CNI:-"flannel"}
   ## K8S_extra
   local kubectl_extra_args
-  kubectl_extra_args="allowed-unsafe-sysctls: 'net.ipv4.tcp_tw_reuse'"
+  kubectl_extra_args="allowed-unsafe-sysctls:'net.ipv4.tcp_tw_reuse'"
   K8S_EXTRA_ARGS=${K8S_EXTRA_ARGS:-${kubectl_extra_args}}
   ## if BCS_CP_WORKER==1, means single master cluster, then untaint master
   BCS_CP_WORKER=${BCS_CP_WORKER:-0}
