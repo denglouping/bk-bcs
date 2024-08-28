@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-CACHE_DIR=${CACHE_DIR:-"/tmp/bcs-ops-offline"}
+CACHE_DIR=${CACHE_DIR:-"./"}
 VERSION=
 CACHE_DIR_BIN="${CACHE_DIR}/bin-tools"
 CACHE_DIR_IMG="${CACHE_DIR}/images"
@@ -11,7 +11,7 @@ CACHE_DIR_RPM="${CACHE_DIR}/rpm"
 
 USER=$(base64 -d <<<"$USER")
 TOKEN=$(base64 -d <<<"$TOKEN")
-MIRRORS=${MIRRORS:-}
+MIRRORS=${MIRRORS:-""}
 
 upload_mirrors() {
   local path filename url
