@@ -11,7 +11,7 @@ CACHE_DIR_RPM="${CACHE_DIR}/rpm"
 
 USER=$(base64 -d <<<"$USER")
 TOKEN=$(base64 -d <<<"$TOKEN")
-MIRRORS="$(base64 -d <<<"$MIRRORS")"
+MIRRORS=$(base64 -d <<<"$MIRRORS")
 
 upload_mirrors() {
   local path filename url
