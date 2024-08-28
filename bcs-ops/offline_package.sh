@@ -11,7 +11,7 @@ CACHE_DIR_RPM="${CACHE_DIR}/rpm"
 
 USER=$(base64 -d <<<"$USER")
 TOKEN=$(base64 -d <<<"$TOKEN")
-MIRRORS=$(base64 -d <<<"$MIRRORS")
+MIRRORS=${MIRRORS:-}
 
 upload_mirrors() {
   local path filename url
@@ -396,7 +396,6 @@ unMarshall_mainfest() {
       esac
     done
     tar cvzf "${CACHE_DIR}/bcs-ops-offline-${VERSION}-${arch}.tgz" -C "${CACHE_DIR}" "version-${VERSION}/"
-    upload_mirrors "version" "${CACHE_DIR}/bcs-ops-offline-${VERSION}-${arch}.tgz"
     ((i += 1))
   done
 }
