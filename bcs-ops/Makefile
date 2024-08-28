@@ -14,7 +14,7 @@ build:clean
 	tar -czvf bcs-ops-script-release-$(VER).tar.gz --exclude=bcs-ops-offline --exclude=\..* --exclude=.*tar.gz ./*
 	md5sum bcs-ops-script-release-$(VER).tar.gz >> MD5SUMS
 
-build_offline_pkg:clean
+build_offline_pkg:build
 	find . -not -path "*/.git/*" -a -not -path "*/bcs-ops-offline/*" -a -not -path "*/charts/*" -a -not -path "*/functions/*" -a -not -path "*.yaml" -a -not -path "*.md" -type f -print0 | xargs -0 chmod 555
 	find ./functions/ -not -path "*/.git/*" -a -not -path "*/bcs-ops-offline/*" -a -not -path "*/charts/*" -type f -print0 | xargs -0 chmod 444
 	tar -czvf bcs-ops-script-release-$(VER).tar.gz --exclude=bcs-ops-offline --exclude=\..* --exclude=.*tar.gz ./*

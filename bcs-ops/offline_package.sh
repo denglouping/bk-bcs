@@ -11,13 +11,13 @@ CACHE_DIR_RPM="${CACHE_DIR}/rpm"
 
 USER=$(base64 -d <<<"$USER")
 TOKEN=$(base64 -d <<<"$TOKEN")
+MIRRORS="$(base64 -d <<<"$MIRRORS")"
 
 upload_mirrors() {
   local path filename url
   path=$1
   filename=$2
-  url="https://mirrors.tencent.com/repository/generic\
-/bcs-ops/bcs-ops-offline/${path}/"
+  url="${MIRRORS}/${path}/"
   local curl_cmd=(curl --request PUT -u "${USER}:${TOKEN}"
     --url "${url}" --upload-file "${filename}")
   echo "${curl_cmd[@]}"
@@ -259,8 +259,8 @@ download_yq() {
   tar_name="${CACHE_DIR_BIN}/${name}-${version}.xz"
 
   url="https://github.com/mikefarah/yq/releases/download/v${version}/yq_linux_${arch}.tar.gz"
-  safe_curl "$url" "yq_linux_${arch}tar.gz"
-  tar -xf yq_linux_${arch}tar.gz -O | xz > ${tar_name}
+  safe_curl "$url" "yq_linux_${arch}.tar.gz"
+  tar -xf yq_linux_${arch}.tar.gz -O | xz > ${tar_name}
   cp -v "$tar_name" "${CACHE_DIR}/version-${VERSION}/bin-tools/"
 }
 
@@ -289,8 +289,7 @@ download_rpm() {
       break
     fi
 
-    url="https://mirrors.tencent.com/repository/generic/\
-bcs-ops/bcs-ops-offline/rpm/${rpm_name}"
+    url="${MIRRORS}/rpm/${rpm_name}"
     safe_curl "$url" "$rpm_file" || exit 1
   done <<<"$1"
 }
@@ -307,8 +306,7 @@ download_charts() {
       continue
     fi
 
-    url="https://mirrors.tencent.com/repository/generic\
-/bcs-ops/bcs-ops-offline/charts/${chart_name}"
+    url="${MIRRORS}/charts/${chart_name}"
     safe_curl "$url" "$chart_file" || exit 1
   done
 }
