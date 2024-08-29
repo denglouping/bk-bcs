@@ -16,7 +16,7 @@ build:clean
 
 build_offline_pkg:build
 	./offline_package.sh env/offline-manifest.yaml
-	for f in $(shell find . -iname 'bcs-ops-offline-*.tgz' -type f -printf '%P ');do \
+	for f in $(shell find . -iname 'bcs-ops-offline-*.tgz' -type f -printf '%P\n');do \
 		mv $$f bcs-ops-offline-release-$(VER)-k8s-$${f##*-}; \
 	done
 	md5sum bcs-ops-offline-release-$(VER)-k8s-*.tgz >> MD5SUMS
