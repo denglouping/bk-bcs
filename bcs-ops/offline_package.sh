@@ -2,13 +2,15 @@
 
 set -euo pipefail
 
-CACHE_DIR=${CACHE_DIR:-"./"}
+CACHE_DIR=${CACHE_DIR:-"./bcs-ops-offline"}
 VERSION=
 CACHE_DIR_BIN="${CACHE_DIR}/bin-tools"
 CACHE_DIR_IMG="${CACHE_DIR}/images"
 CACHE_DIR_CHART="${CACHE_DIR}/charts"
 CACHE_DIR_RPM="${CACHE_DIR}/rpm"
 
+USEr=${USER:-""}
+TOKEN=${TOKEN:-""}
 USER=$(base64 -d <<<"$USER")
 TOKEN=$(base64 -d <<<"$TOKEN")
 MIRRORS=${MIRRORS:-""}
@@ -368,7 +370,7 @@ unMarshall_mainfest() {
     for project in "${projects[@]}"; do
       case $project in
         "version")
-          echo "version: $VERSION"
+          echo "version: $VERSION $arch"
           ;;
         "bin-tools")
           mkdir -pv "${CACHE_DIR}/version-${VERSION}/bin-tools"

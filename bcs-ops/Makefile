@@ -11,16 +11,18 @@ clean:
 build:clean
 	find . -not -path "*/.git/*" -a -not -path "*/bcs-ops-offline/*" -a -not -path "*/charts/*" -a -not -path "*/functions/*" -a -not -path "*.yaml" -a -not -path "*.md" -type f -print0 | xargs -0 chmod 555
 	find ./functions/ -not -path "*/.git/*" -a -not -path "*/bcs-ops-offline/*" -a -not -path "*/charts/*"  -type f -print0 | xargs -0 chmod 444
-	tar -czvf bcs-ops-script-release-$(VER).tar.gz --exclude=bcs-ops-offline --exclude=\..* --exclude=.*tar.gz ./*
+	tar -czvf bcs-ops-script-release-$(VER).tar.gz --exclude=bcs-ops-offline --exclude=\..* --exclude=.*tar.gz  --exclude=version-.* --exclude=.*xz ./*
 	md5sum bcs-ops-script-release-$(VER).tar.gz >> MD5SUMS
 
-build_offline_pkg:build
+build_offline_1:clean
 	./offline_package.sh env/offline-manifest.yaml
-	for f in $(shell find . -iname 'bcs-ops-offline-*.tgz' -type f -printf '%P\n');do \
-		mv $$f bcs-ops-offline-release-$(VER)-k8s-$${f##*-}; \
+	mv ./bcs-ops-offline/*.tgz ./
+
+build_offline_pkg:build_offline_1
+	for f in $(wildcard ./*.tgz);do \
+		mv $$f bcs-ops-offline-release-$(VER)-k8s-$${f##*-offline-}; \
 	done
 	md5sum bcs-ops-offline-release-$(VER)-k8s-*.tgz >> MD5SUMS
-
 
 build_image:clean
 	docker build -f docker/Dockerfile -t bcs-ops-upload:test .
