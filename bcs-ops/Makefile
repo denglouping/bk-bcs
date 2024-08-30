@@ -14,12 +14,12 @@ build:clean
 	tar -czvf bcs-ops-script-release-$(VER).tgz --exclude=bcs-ops-offline --exclude=\..* --exclude=.*tar.gz --exclude=.*tgz  --exclude=version-.* --exclude=.*xz ./*
 	md5sum bcs-ops-script-release-$(VER).tgz >> MD5SUMS
 
-build_offline_1:clean
+build_offline_1:build
 	./offline_package.sh env/offline-manifest.yaml
 	mv ./bcs-ops-offline/*.tgz ./
 
 build_offline_pkg:build_offline_1
-	for f in $(wildcard ./*.tgz);do \
+	for f in $(shell ls bcs-ops-offline*.tgz);do \
 		mv $$f bcs-ops-offline-release-$(VER)-k8s-$${f##*-offline-}; \
 	done
 	md5sum bcs-ops-offline-release-$(VER)-k8s-*.tgz >> MD5SUMS
