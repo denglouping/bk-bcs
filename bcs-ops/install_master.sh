@@ -60,6 +60,9 @@ safe_source "${ROOT_DIR}/env/bcs.env"
 # wait to check kubelet start
 sleep 30
 if [[ -z ${MASTER_JOIN_CMD:-} ]]; then
+  if [[ -n ${JOIN_CMD:-} ]]; then
+    utils::log "FATAL" "install master need to set MASTER_JOIN_CMD but JOIN_CMD is set"
+  fi
   if systemctl is-active kubelet.service -q; then
     utils::log "WARN" "kubelet service is active now, skip kubeadm init"
   else
