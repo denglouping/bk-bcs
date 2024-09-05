@@ -98,6 +98,16 @@ _curl_docker() {
     utils::log "ERROR" "fail to download ${url}"
   fi
 
+  name="runc"
+  ver=$(awk '/version: \"'"${K8S_VER}"'\"/{f=1;next} f && /'"${name}"':/{gsub("\"","",$2);print $2;exit}' "${ROOT_DIR}"/env/offline-manifest.yaml)
+  file="${name}-${ver}.tgz"
+  url="${REPO_URL}/${file}"
+  if curl -sSfL "${url}" -o "${bin_path}/${file}" -m "360"; then
+    utils::log "INFO" "Downloaded ${url}"
+  else
+    utils::log "ERROR" "fail to download ${url}"
+  fi
+
   _offline_docker
 }
 
@@ -119,6 +129,13 @@ _offline_docker() {
   else
     utils::log "INFO" "creating docker group"
     groupadd docker
+  fi
+
+  tar_name=$(find "$bin_path" -iname "runc-*.tgz" -type f | head -1)
+  if [[ -z ${tar_name} ]]; then
+    utils::log "FATAL" "can't find docker installation package in ${bin_path}"
+  else
+    tar xvzf "${tar_name}" -C /usr/bin/ --strip-components=1 bin/
   fi
 }
 
