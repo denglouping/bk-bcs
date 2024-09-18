@@ -73,7 +73,7 @@ _on_cloud() {
 }
 
 _on_baremetal() {
-  if [ -n "$LAN_DEV" ];then
+  if [ -n "${LAN_DEV}" ];then
     if ip addr show ${LAN_DEV} >/dev/null;then
       LAN_IP=$(ip addr show ${LAN_DEV}|grep "inet "|awk ' { print $2 } '|sed "s/\/.*//g")
       if [[ -n $LAN_IP ]]; then
