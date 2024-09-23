@@ -51,7 +51,7 @@ init_env() {
   BK_HOME=${BK_HOME:-"/data/bcs"}
   K8S_IPv6_STATUS=${K8S_IPv6_STATUS:-"Disable"}
   LAN_IP=${LAN_IP:-}
-  LAN_DEV=${LAN_DEV:-}
+  export LAN_DEV=${LAN_DEV:-}
   LAN_IPv6=${LAN_IPv6:-}
   BCS_SYSCTL=${BCS_SYSCTL:=1}
   if [[ -z ${LAN_IP} ]] && [[ ${K8S_IPv6_STATUS,,} != "singlestack" ]]; then
@@ -127,7 +127,7 @@ init_env() {
   # apiserver HA
   ENABLE_APISERVER_HA=${ENABLE_APISERVER_HA:-"false"}
   APISERVER_HA_MODE=${APISERVER_HA_MODE:-"bcs-apiserver-proxy"}
-  VIP=${VIP:-}
+  VIP=${VIP:-"1.2.3.4"}
   ## bcs apiserver proxy
   APISERVER_PROXY_VERSION=${APISERVER_PROXY_VERSION:-"v1.29.0-alpha.130-tencent"}
   PROXY_TOOL_PATH=${PROXY_TOOL_PATH:-"/usr/bin"}
