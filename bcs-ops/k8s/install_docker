@@ -91,7 +91,7 @@ _curl_docker() {
   name="docker"
   ver=$(awk '/version: \"'"${K8S_VER}"'\"/{f=1;next} f && /'"${name}"':/{gsub("\"","",$2);print $2;exit}' "${ROOT_DIR}"/env/offline-manifest.yaml)
   file="${name}-${ver}.tgz"
-  url=${REPO_URL}/${file}
+  url=${REPO_URL}/docker/${file}
   if curl -sSfL "${url}" -o "${bin_path}/${file}" -m "360"; then
     utils::log "INFO" "Downloaded ${url}"
   else
@@ -101,7 +101,7 @@ _curl_docker() {
   name="runc"
   ver=$(awk '/version: \"'"${K8S_VER}"'\"/{f=1;next} f && /'"${name}"':/{gsub("\"","",$2);print $2;exit}' "${ROOT_DIR}"/env/offline-manifest.yaml)
   file="${name}-${ver}.tgz"
-  url="${REPO_URL}/${file}"
+  url="${REPO_URL}/runc/${file}"
   if curl -sSfL "${url}" -o "${bin_path}/${file}" -m "360"; then
     utils::log "INFO" "Downloaded ${url}"
   else

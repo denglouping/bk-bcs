@@ -111,7 +111,7 @@ init_env() {
   ## yum_mirror
   MIRROR_URL=${MIRROR_URL:-"https://mirrors.tencent.com"}
   ## repo_url
-  REPO_URL=${REPO_URL:-"https://bkopen-1252002024.file.myqcloud.com/ce7/tools"}
+  REPO_URL=${REPO_URL:-"https://bkopen-1252002024.file.myqcloud.com/bcs-ops"}
   ##
   MIRROR_IP=${MIRROR_IP:-}
   ## image_registry
@@ -163,7 +163,7 @@ _setIPUsage_and_exit() {
 you can set LAN_IP manually by following:
 set -x
 LAN_IP=<YOUR LAN IP>
-LAN_IPv6<YOUR LAN ipv6> #if enable K8S_IPv6_STATUS=dualstack
+LAN_IPv6=<YOUR LAN ipv6> #if enable K8S_IPv6_STATUS=dualstack
 set -x
 EOF
   exit 1

@@ -8,7 +8,7 @@ Usage:
     [ -h --help -?     show usage ]
     [ -v -V --version  show script version]
     [ -i --install     support: master node helm op]
-    [ -r --render      suppport: bcsenv kubeadm joincmd]
+    [ -r --render      support: bcsenv kubeadm joincmd]
     [ -c --clean       support: master node bcsenv op]
 	[ -e --check       support: all]
     [ -e --check ]
@@ -71,7 +71,7 @@ ip -6 route add fd00::/8 via <next hop> dev <interface> src <lan_ipv6>
 ```bash
 set -x
 LAN_IP=<YOUR LAN IP>
-LAN_IPv6<YOUR LAN ipv6> #if enable K8S_IPv6_STATUS=dualstack
+LAN_IPv6=<YOUR LAN ipv6> #if enable K8S_IPv6_STATUS=dualstack
 set +x
 ```
 
