@@ -53,8 +53,8 @@ download_k8s() {
   name=k8s
   version="$1"
   [[ -n ${version} ]] || echo "$name missing version"
-  tar_arch_name="${CACHE_DIR_BIN}/${name}-${arch}-${version}.tgz"
-  tar_name="${name}-${version}.tgz"
+  tar_name="${name}-${arch}-${version}.tgz"
+  tar_arch_name="${CACHE_DIR_BIN}/${tar_name}"
   if [[ -f "$tar_arch_name" ]]; then
     echo "[INFO]: $tar_arch_name exists, skip download"
     cp -v "$tar_arch_name" "${CACHE_DIR}/version-${VERSION}/bin-tools/"
@@ -89,8 +89,8 @@ download_cni-plugins() {
   name="cni-plugins"
   version="$1"
   [[ -n ${version} ]] || echo "$name missing version"
-  tar_arch_name="${CACHE_DIR_BIN}/${name}-${arch}-${version}.tgz"
-  tar_name="${name}-${version}.tgz"
+  tar_name="${name}-${arch}-${version}.tgz"
+  tar_arch_name="${CACHE_DIR_BIN}/${tar_name}"
   if [[ -f "${tar_arch_name}" ]]; then
     echo "[INFO]: ${tar_arch_name} exists, skip download"
     cp -v "${tar_arch_name}" "${CACHE_DIR}/version-${VERSION}/bin-tools/"
@@ -121,8 +121,9 @@ download_crictl() {
   name="crictl"
   version="$1"
   [[ -n ${version} ]] || echo "$name missing version"
-  tar_arch_name="${CACHE_DIR_BIN}/${name}-${arch}-${version}.tgz"
-  tar_name="${name}-${version}.tgz"
+  tar_name="${name}-${arch}-${version}.tgz"
+  tar_arch_name="${CACHE_DIR_BIN}/${tar_name}"
+
   if [[ -f "$tar_arch_name" ]]; then
     echo "[INFO]: $tar_arch_name exists, skip download"
     cp -v "$tar_arch_name" "${CACHE_DIR}/version-${VERSION}/bin-tools/"
@@ -152,8 +153,8 @@ download_docker() {
   name="docker"
   version="$1"
   [[ -n ${version} ]] || echo "$name missing version"
-  tar_arch_name="${CACHE_DIR_BIN}/${name}-${arch}-${version}.tgz"
-  tar_name="${name}-${version}.tgz"
+  tar_name="${name}-${arch}-${version}.tgz"
+  tar_arch_name="${CACHE_DIR_BIN}/${tar_name}"
   if [[ -f "$tar_arch_name" ]]; then
     echo "[INFO]: $tar_arch_name exists, skip download"
     cp -v "$tar_arch_name" "${CACHE_DIR}/version-${VERSION}/bin-tools/"
@@ -199,8 +200,9 @@ download_containerd() {
   name="containerd"
   version="$1"
   [[ -n "${version}" ]] || echo "$name missing version"
-  tar_arch_name="${CACHE_DIR_BIN}/${name}-${arch}-${version}.tgz"
-  tar_name="${name}-${version}.tgz"
+  tar_name="${name}-${arch}-${version}.tgz"
+  tar_arch_name="${CACHE_DIR_BIN}/${tar_arch_name}"
+
   if [[ -f "$tar_arch_name" ]]; then
     echo "[INFO]: $tar_arch_name exists, skip download"
     cp -v "$tar_arch_name" "${CACHE_DIR}/version-${VERSION}/bin-tools/"
@@ -237,8 +239,9 @@ download_runc() {
   name="runc"
   version="$1"
   [[ -n ${version} ]] || echo "$name missing version"
-  tar_arch_name="${CACHE_DIR_BIN}/${name}-${arch}-${version}.tgz"
-  tar_name="${name}-${version}.tgz"
+  tar_name="${name}-${arch}-${version}.tgz"
+  tar_arch_name="${CACHE_DIR_BIN}/${tar_name}"
+
   if [[ -f "$tar_arch_name" ]]; then
     echo "[INFO]: $tar_arch_name exists, skip download"
     cp -v "$tar_arch_name" "${CACHE_DIR}/version-${VERSION}/bin-tools/"
@@ -373,7 +376,7 @@ unMarshall_mainfest() {
   while ((i < ver_num)); do
     IFS=',' read -ra projects <<<"$(yq -o csv e '.bcs-ops[0] | keys' "$manifest_file")"
     VERSION=$(yq e ".bcs-ops[$i].version" "$manifest_file")
-    rm -rf version-${VERSION}
+    rm -rf ${CACHE_DIR}/version-${VERSION}
     for project in "${projects[@]}"; do
       case $project in
         "version")
