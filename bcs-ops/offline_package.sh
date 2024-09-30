@@ -373,6 +373,7 @@ unMarshall_mainfest() {
   while ((i < ver_num)); do
     IFS=',' read -ra projects <<<"$(yq -o csv e '.bcs-ops[0] | keys' "$manifest_file")"
     VERSION=$(yq e ".bcs-ops[$i].version" "$manifest_file")
+    rm -rf version-${VERSION}
     for project in "${projects[@]}"; do
       case $project in
         "version")
