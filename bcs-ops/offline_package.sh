@@ -201,7 +201,7 @@ download_containerd() {
   version="$1"
   [[ -n "${version}" ]] || echo "$name missing version"
   tar_name="${name}-${arch}-${version}.tgz"
-  tar_arch_name="${CACHE_DIR_BIN}/${tar_arch_name}"
+  tar_arch_name="${CACHE_DIR_BIN}/${tar_name}"
 
   if [[ -f "$tar_arch_name" ]]; then
     echo "[INFO]: $tar_arch_name exists, skip download"
