@@ -62,6 +62,11 @@ init_env() {
   fi
   BCS_OFFLINE=${BCS_OFFLINE:-}
   INSTALL_METHOD=${INSTALL_METHOD:-"yum"}
+  if [[ $(uname -m) == "x86_64" ]];then
+    ARCH="amd64"
+  elif [[ $(uname -m) == "aarch64" ]];then
+    ARCH="arm64"
+  fi
 
   # cri
   CRI_TYPE=${CRI_TYPE:-"docker"}
@@ -253,6 +258,7 @@ BCS_SYSCTL=${BCS_SYSCTL:=1}
 K8S_IPv6_STATUS="${K8S_IPv6_STATUS}"
 BCS_OFFLINE="${BCS_OFFLINE}"
 INSTALL_METHOD="${INSTALL_METHOD}"
+ARCH="${ARCH}"
 
 ## CRI
 CRI_TYPE="${CRI_TYPE}"
@@ -275,6 +281,7 @@ CRI_EOF
         ;;
     esac
   )
+
 
 ## K8S
 ETCD_LIB="${ETCD_LIB}"

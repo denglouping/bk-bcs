@@ -109,7 +109,7 @@ _offline_containerd() {
   local bin_path tar_name
   bin_path=${ROOT_DIR}/version-${K8S_VER}/bin-tools/
 
-  tar_name=$(find "$bin_path" -iname "containerd-*.tgz" -type f | head -1)
+  tar_name=$(find "$bin_path" -iname "containerd-${ARCH}-*.tgz" -type f | head -1)
   if [[ -z ${tar_name} ]]; then
     utils::log "FATAL" "can't find docker installation package in ${bin_path}"
   else
@@ -152,7 +152,7 @@ WantedBy=multi-user.target
 EOF
   fi
 
-  tar_name=$(find "$bin_path" -iname "runc-*.tgz" -type f | head -1)
+  tar_name=$(find "$bin_path" -iname "runc-${ARCH}-*.tgz" -type f | head -1)
   if [[ -z ${tar_name} ]]; then
     utils::log "FATAL" "can't find docker installation package in ${bin_path}"
   else

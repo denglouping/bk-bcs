@@ -264,7 +264,7 @@ download_yq() {
   version="$1"
   name="yq"
   [[ -n ${version} ]] || echo "$name missing version"
-  tar_name="${CACHE_DIR_BIN}/${name}-${version}.xz"
+  tar_name="${CACHE_DIR_BIN}/${name}-${arch}-${version}.xz"
 
   url="https://github.com/mikefarah/yq/releases/download/v${version}/yq_linux_${arch}.tar.gz"
   safe_curl "$url" "${CACHE_DIR_BIN}/yq_linux_${arch}.tar.gz"
@@ -277,7 +277,7 @@ download_jq() {
   version="$1"
   name="jq"
   [[ -n ${version} ]] || echo "$name missing version"
-  tar_name="${CACHE_DIR_BIN}/${name}-${version}.xz"
+  tar_name="${CACHE_DIR_BIN}/${name}-${arch}-${version}.xz"
 
   url="https://github.com/jqlang/jq/releases/download/jq-${version}/jq-linux-${arch}"
   safe_curl "$url" "${CACHE_DIR_BIN}/jq-linux-${arch}"
