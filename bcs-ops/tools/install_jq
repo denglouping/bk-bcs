@@ -49,7 +49,7 @@ _curl_jq() {
 _offline_jq() {
   local bin_path tar_name
   bin_path=${ROOT_DIR}/version-${K8S_VER}/bin-tools/
-  tar_name=$(find "$bin_path" -iname "jq-${ARCH}-*.xz" -type f | head -1)
+  tar_name=$(find "$bin_path" -iname "jq-*-${ARCH}.xz" -type f | head -1)
 
   unxz -dc "${tar_name}" >/tmp/jq
   chmod +x /tmp/jq

@@ -53,7 +53,7 @@ download_k8s() {
   name=k8s
   version="$1"
   [[ -n ${version} ]] || echo "$name missing version"
-  tar_name="${name}-${arch}-${version}.tgz"
+  tar_name="${name}-${version}-${arch}.tgz"
   tar_arch_name="${CACHE_DIR_BIN}/${tar_name}"
   if [[ -f "$tar_arch_name" ]]; then
     echo "[INFO]: $tar_arch_name exists, skip download"
@@ -89,7 +89,7 @@ download_cni-plugins() {
   name="cni-plugins"
   version="$1"
   [[ -n ${version} ]] || echo "$name missing version"
-  tar_name="${name}-${arch}-${version}.tgz"
+  tar_name="${name}-${version}-${arch}.tgz"
   tar_arch_name="${CACHE_DIR_BIN}/${tar_name}"
   if [[ -f "${tar_arch_name}" ]]; then
     echo "[INFO]: ${tar_arch_name} exists, skip download"
@@ -121,7 +121,7 @@ download_crictl() {
   name="crictl"
   version="$1"
   [[ -n ${version} ]] || echo "$name missing version"
-  tar_name="${name}-${arch}-${version}.tgz"
+  tar_name="${name}-${version}-${arch}.tgz"
   tar_arch_name="${CACHE_DIR_BIN}/${tar_name}"
 
   if [[ -f "$tar_arch_name" ]]; then
@@ -153,7 +153,7 @@ download_docker() {
   name="docker"
   version="$1"
   [[ -n ${version} ]] || echo "$name missing version"
-  tar_name="${name}-${arch}-${version}.tgz"
+  tar_name="${name}-${version}-${arch}.tgz"
   tar_arch_name="${CACHE_DIR_BIN}/${tar_name}"
   if [[ -f "$tar_arch_name" ]]; then
     echo "[INFO]: $tar_arch_name exists, skip download"
@@ -200,7 +200,7 @@ download_containerd() {
   name="containerd"
   version="$1"
   [[ -n "${version}" ]] || echo "$name missing version"
-  tar_name="${name}-${arch}-${version}.tgz"
+  tar_name="${name}-${version}-${arch}.tgz"
   tar_arch_name="${CACHE_DIR_BIN}/${tar_name}"
 
   if [[ -f "$tar_arch_name" ]]; then
@@ -239,7 +239,7 @@ download_runc() {
   name="runc"
   version="$1"
   [[ -n ${version} ]] || echo "$name missing version"
-  tar_name="${name}-${arch}-${version}.tgz"
+  tar_name="${name}-${version}-${arch}.tgz"
   tar_arch_name="${CACHE_DIR_BIN}/${tar_name}"
 
   if [[ -f "$tar_arch_name" ]]; then
@@ -267,7 +267,7 @@ download_yq() {
   version="$1"
   name="yq"
   [[ -n ${version} ]] || echo "$name missing version"
-  tar_name="${CACHE_DIR_BIN}/${name}-${arch}-${version}.xz"
+  tar_name="${CACHE_DIR_BIN}/${name}-${version}-${arch}.xz"
 
   url="https://github.com/mikefarah/yq/releases/download/v${version}/yq_linux_${arch}.tar.gz"
   safe_curl "$url" "${CACHE_DIR_BIN}/yq_linux_${arch}.tar.gz"
@@ -280,7 +280,7 @@ download_jq() {
   version="$1"
   name="jq"
   [[ -n ${version} ]] || echo "$name missing version"
-  tar_name="${CACHE_DIR_BIN}/${name}-${arch}-${version}.xz"
+  tar_name="${CACHE_DIR_BIN}/${name}-${version}-${arch}.xz"
 
   url="https://github.com/jqlang/jq/releases/download/jq-${version}/jq-linux-${arch}"
   safe_curl "$url" "${CACHE_DIR_BIN}/jq-linux-${arch}"
