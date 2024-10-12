@@ -339,25 +339,14 @@ download_img() {
     img_tag=${img_name##*:}
     img_name=${img_name%%:*}
     img_tar="${CACHE_DIR_IMG}/${img_name}-${img_tag}.tar"
-#    if [[ -f "${img_tar}" ]]; then
-#      echo "[INFO]:${img} exist, skip pull"
-#      cp -v "$img_tar" "${CACHE_DIR}/version-${VERSION}/images/"
-#      continue
-#    fi
-    echo "[INFO]: trying to docker pull --platform ${arch} ${rel_img} as ${img}"
-    if docker manifest inspect "${rel_img}" >/dev/null; then
-#    if skopeo inspect --raw "docker://${img}" >/dev/null; then
+    echo "[INFO]: trying to docker pull --platform linux/${arch} ${rel_img} as ${img}"
+    if docker manifest inspect "${rel_img}"|grep architecture >/dev/null; then
       if docker pull --platform linux/${arch} ${rel_img} >/dev/null;then
         docker inspect ${rel_img}|grep arch
-        if ! docker inspect ${rel_img}|grep arch |grep ${arch};then
-          echo "[FATAL]: wrong image arch"
-          exit 1
-        fi
         echo docker tag ${rel_img} ${img}
         docker tag ${rel_img} ${img} >/dev/null
         echo docker save ${img} -o ${img_tar}
         docker save ${img} -o ${img_tar} >/dev/null
-#      if skopeo copy --arch ${arch} "docker://${rel_img}" "docker-archive:${img_tar}:${img}" >/dev/null; then
         mv -v "$img_tar" "${CACHE_DIR}/version-${VERSION}/images/"
       else
         echo "[FATAL]: fail to pull ${img}"
@@ -365,6 +354,7 @@ download_img() {
         exit 1
       fi
     else
+      docker manifest inspect "${rel_img}"
       echo "[FATAL]: can't find ${img} in registry!"
       exit 1
     fi
