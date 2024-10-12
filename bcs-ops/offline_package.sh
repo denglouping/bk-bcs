@@ -341,7 +341,10 @@ download_img() {
     img_tar="${CACHE_DIR_IMG}/${img_name}-${img_tag}.tar"
 
     echo "[INFO]: trying to docker pull --platform linux/${arch} ${rel_img} as ${img}"
-    arch_info=$(docker manifest inspect "${rel_img}"|grep architecture|grep ${arch})
+    arch_info=""
+    if docker manifest inspect "${rel_img}"|grep architecture|grep ${arch};then
+      arch_info=$(docker manifest inspect "${rel_img}"|grep architecture|grep ${arch})
+    fi
     if [[ -n "${arch_info}" || "${rel_img}" =~ "bcs-apiserver-proxy" ]]; then
       echo "[INFO]: linux/${arch} ${rel_img} manifest check success"
       if docker pull --platform linux/${arch} ${rel_img} > /dev/null;then
