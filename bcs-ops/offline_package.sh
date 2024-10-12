@@ -348,6 +348,7 @@ download_img() {
     if docker manifest inspect "${rel_img}" >/dev/null; then
 #    if skopeo inspect --raw "docker://${img}" >/dev/null; then
       if docker pull --platform linux/${arch} ${rel_img} >/dev/null;then
+        docker inspect ${rel_img}|grep arch
         if ! docker inspect ${rel_img}|grep arch |grep ${arch};then
           echo "[FATAL]: wrong image arch"
           exit 1
