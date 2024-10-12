@@ -345,7 +345,7 @@ download_img() {
     if docker manifest inspect "${rel_img}"|grep architecture|grep ${arch};then
       arch_info=$(docker manifest inspect "${rel_img}"|grep architecture|grep ${arch})
     fi
-    if [[ -n "${arch_info}" || "${rel_img}" =~ "bcs-apiserver-proxy" ]]; then
+    if [[ -n "${arch_info}" || "${rel_img}" =~ "bcs-apiserver-proxy" || "${rel_img}" =~ "multus-cni" ]]; then
       echo "[INFO]: linux/${arch} ${rel_img} manifest check success"
       if docker pull --platform linux/${arch} ${rel_img} > /dev/null;then
         echo "[INFO]: docker pull --platform linux/${arch} ${rel_img} success"
