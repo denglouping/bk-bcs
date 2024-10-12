@@ -339,10 +339,10 @@ download_img() {
     img_tag=${img_name##*:}
     img_name=${img_name%%:*}
     img_tar="${CACHE_DIR_IMG}/${img_name}-${img_tag}.tar"
-    echo "[INFO]: trying to docker pull --platform linux/${arch} ${rel_img} as ${img}"
-    if docker manifest inspect "${rel_img}"|grep architecture; then
+    if docker manifest inspect "${rel_img}"|grep architecture|grep ${arch}; then
+      echo "[INFO]: trying to docker pull --platform linux/${arch} ${rel_img} as ${img}"
       if docker pull --platform linux/${arch} ${rel_img};then
-        docker inspect ${rel_img}|grep arch
+        echo "[INFO]: docker pull --platform linux/${arch} ${rel_img} success"
         echo docker tag ${rel_img} ${img}
         docker tag ${rel_img} ${img} >/dev/null
         echo docker save ${img} -o ${img_tar}
