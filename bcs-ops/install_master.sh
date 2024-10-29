@@ -97,6 +97,9 @@ if [[ -z ${MASTER_JOIN_CMD:-} ]]; then
       utils::log "FATAL" "fail to apply multus"
     fi
   fi
+
+  # create etcd secret
+  kubectl create secret generic etcd-client-cert --from-file=etcd-ca=/etc/kubernetes/pki/ca.crt --from-file=etcd-client-key=/etc/kubernetes/pki/apiserver-etcd-client.key --from-file=etcd-client=/etc/kubernetes/pki/apiserver-etcd-client.crt -n kube-system
 else
   if systemctl is-active kubelet.service -q; then
     utils::log "WARN" "kubelet service is active now, skip kubeadm join"
