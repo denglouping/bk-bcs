@@ -51,11 +51,11 @@ init_env() {
   BK_HOME=${BK_HOME:-"/data/bcs"}
   K8S_IPv6_STATUS=${K8S_IPv6_STATUS:-"Disable"}
   LAN_IP=${LAN_IP:-}
-  export LAN_DEV=${LAN_DEV:-}
+  LAN_DEV=${LAN_DEV:-}
   LAN_IPv6=${LAN_IPv6:-}
   BCS_SYSCTL=${BCS_SYSCTL:=1}
   if [[ -z ${LAN_IP} ]] && [[ ${K8S_IPv6_STATUS,,} != "singlestack" ]]; then
-    LAN_IP="$("${ROOT_DIR}"/system/get_lan_ip -4)"
+    LAN_IP="$("${ROOT_DIR}"/system/get_lan_ip -4 ${LAN_DEV})"
   fi
   if [[ -z $LAN_IPv6 ]] && [[ ${K8S_IPv6_STATUS,,} != "disable" ]]; then
     LAN_IPv6="$("${ROOT_DIR}"/system/get_lan_ip -6)"
