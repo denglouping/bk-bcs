@@ -51,8 +51,10 @@ clean_cni() {
 }
 
 clean_vni() {
+  ifconfig cni0
   ip l | awk '/cni0|kube-ipvs0/ && !/veth/ {eth=$2;gsub(":","",eth);print eth}' | xargs -r -n 1 ip l d
   ip l | awk '/veth/{eth=$2;split(eth,a,"@");print a[1]}' | xargs -r -n 1 ip l d
+  ifconfig cni0
 }
 
 utils::log "INFO" "reseting kubelet"
