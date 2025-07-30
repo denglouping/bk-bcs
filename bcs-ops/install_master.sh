@@ -107,7 +107,7 @@ if [[ -z ${MASTER_JOIN_CMD:-} ]]; then
 
   # create etcd secret
   if ! kubectl get secret etcd-client-cert etcd-client-cert -n kube-system;then
-    kubectl create secret generic etcd-client-cert --from-file=etcd-ca=/etc/kubernetes/pki/ca.crt --from-file=etcd-client-key=/etc/kubernetes/pki/apiserver-etcd-client.key --from-file=etcd-client=/etc/kubernetes/pki/apiserver-etcd-client.crt -n kube-system
+    kubectl create secret generic etcd-client-cert --from-file=etcd-ca=/etc/kubernetes/pki/ca.crt --from-file=etcd-client-key=/etc/kubernetes/pki/apiserver-etcd-client.key --from-file=etcd-client=/etc/kubernetes/pki/apiserver-etcd-client.crt -n bkmonitor-operator
   fi
 else
   if systemctl is-active kubelet.service -q; then
