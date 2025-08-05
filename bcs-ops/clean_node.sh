@@ -39,6 +39,7 @@ clean_container() {
 }
 
 clean_cni() {
+  ifconfig flannel.1
   case ${K8S_CNI} in
     "flannel")
       ip l | awk '/flannel/{eth=$2;gsub(":","",eth);print eth}' | xargs -r -n 1 ip l d
@@ -47,7 +48,11 @@ clean_cni() {
       return 0
       ;;
   esac
+  ifconfig flannel.1
   rm -rf /etc/cni/net.d/*
+  rm -rf /opt/cni/bin
+  rm -rf /var/run/flannel
+  rm -rf /var/lib/cni
 }
 
 clean_vni() {
