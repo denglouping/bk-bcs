@@ -51,6 +51,9 @@ main() {
 
   utils::log "INFO" "Removing kubeadm kubelet kubectl"
   yum remove -y kubeadm kubelet kubectl cri-tools
+  if rpm -qa|grep kubernetes-cni;then
+    yum remove -y kubernetes-cni
+  fi
   utils::log "OK" "kubeadm kubelet kubectl Remove success"
   return 0
 }
