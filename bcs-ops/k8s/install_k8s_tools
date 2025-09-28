@@ -52,24 +52,35 @@ gpgcheck=0
 EOF
       break
     elif (( ${v1[i]} > ${v2[i]} )); then
+      if curl https://mirrors.tencent.com/kubernetes_new/core:/stable:/v${K8S_VER%.*}/rpm;then
 cat >"$ROOT_DIR/kubernetes.repo" <<EOF
 [kubernetes]
 name=Kubernetes
 baseurl=${repo_url}
 enabled=1
 gpgcheck=0
-[kubernetes1]
-name=Kubernetes
-baseurl=https://pkgs.k8s.io/core:/stable:/v${K8S_VER%.*}/rpm/
-enabled=1
-gpgcheck=0
 
-[kubernetes2]
+[kubernetes1]
 name=Kubernetes
 baseurl=https://mirrors.tencent.com/kubernetes_new/core:/stable:/v${K8S_VER%.*}/rpm/
 enabled=1
 gpgcheck=0
 EOF
+      else
+cat >"$ROOT_DIR/kubernetes.repo" <<EOF
+[kubernetes]
+name=Kubernetes
+baseurl=${repo_url}
+enabled=1
+gpgcheck=0
+
+[kubernetes1]
+name=Kubernetes
+baseurl=https://pkgs.k8s.io/core:/stable:/v${K8S_VER%.*}/rpm/
+enabled=1
+gpgcheck=0
+EOF
+      fi
       break
     fi
   done
