@@ -73,6 +73,8 @@ install -dv "${BAK_DIR}" || utils::log "FATAL" "create backup dir $BAK_DIR faile
 [[ -d /etc/kubernetes ]] && mv -v /etc/kubernetes "$BAK_DIR"/
 [[ -d /var/lib/kubelet ]] && mv -v /var/lib/kubelet "$BAK_DIR"/
 [[ -d ${KUBELET_LIB} ]] && mv -v "${KUBELET_LIB}" "$BAK_DIR"/kubelet
+[[ -d ${DOCKER_LIB} ]] && mv -v "${DOCKER_LIB}" "$BAK_DIR"/docker
+[[ -d ${CONTAINERD_LIB} ]] && mv -v "${CONTAINERD_LIB}" "$BAK_DIR"/containerd
 [[ -d "$HOME"/.kube ]] && mv -v "$HOME"/.kube "$BAK_DIR"/
 [[ -d ${ETCD_LIB} ]] && mv -v "${ETCD_LIB}" "$BAK_DIR"/
 [[ -L /var/lib/etcd ]] && rm -vf /var/lib/etcd
