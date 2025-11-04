@@ -35,7 +35,11 @@ for file in "${source_files[@]}"; do
 done
 
 clean_container() {
-  crictl ps -aq | xargs -r crictl rm -f
+  if [[ "${CRI_TYPE}" == containerd ]];then
+    crictl ps -aq | xargs -r crictl rm -f
+  else
+    docker ps -qa | xargs -r docker stop
+  fi
 }
 
 clean_cni() {
