@@ -128,11 +128,18 @@ add_containerd() {
         if [[ -f $CONTAINERD_HOST_DIR/hosts.toml ]]; then
             cp "$CONTAINERD_HOST_DIR/hosts.toml" "$CONTAINERD_HOST_DIR/hosts.toml.${TIMESTMP}.bak"
         fi
+        if echo $registry |grep "^http:";then
+cat <<EOF >"$CONTAINERD_HOST_DIR/hosts.toml"
+[host."$registry"]
+  capabilities = ["pull", "resolve", "push"]
+EOF
+        else
         cat <<EOF >"$CONTAINERD_HOST_DIR/hosts.toml"
 [host."https://$registry"]
   capabilities = ["pull", "resolve", "push"]
   skip_verify = true
 EOF
+        fi
     done
 }
 
