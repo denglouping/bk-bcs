@@ -88,6 +88,7 @@ add_docker() {
 
     registries=$(printf '"%s",' "${REGISTRIES[@]}")
     registries="[${registries%,}]"
+    registries=$(echo $registries|sed -E 's#(https?://)([^[:space:]/]+)#\2#g')
 
     jq --arg k 'insecure-registries' --argjson v "$registries" '.[$k] as $insecure_registries | if $insecure_registries then reduce $v[] as $r (.; if $insecure_registries | index($r) == null then .[$k] += [$r] else . end) else .[$k] = $v end' $DOCKER_CONFIG_PATH >/tmp/docker_daemon-"${TIMESTMP}".tmp
 
@@ -123,7 +124,8 @@ del_docker() {
 add_containerd() {
     local registry
     for registry in "${REGISTRIES[@]}"; do
-        CONTAINERD_HOST_DIR="/etc/containerd/certs.d/${registry}"
+        registry_domain=$(echo $registry|sed -E 's#(https?://)([^[:space:]/]+)#\2#g')
+        CONTAINERD_HOST_DIR="/etc/containerd/certs.d/${registry_domain}"
         mkdir -p "$CONTAINERD_HOST_DIR"
         if [[ -f $CONTAINERD_HOST_DIR/hosts.toml ]]; then
             cp "$CONTAINERD_HOST_DIR/hosts.toml" "$CONTAINERD_HOST_DIR/hosts.toml.${TIMESTMP}.bak"
