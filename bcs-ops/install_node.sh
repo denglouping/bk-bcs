@@ -157,7 +157,7 @@ for i in `seq 10`;
 do
   sleep 30
   node_name=$(ps -ef|grep kubelet|grep hostname-override|grep -o "hostname-override=\S*"|sed "s/hostname-override=//g"|head -1)
-  if ! kubectl get node --kubeconfig /etc/kubernetes/kubelet.conf ${node_name}|grep NotReady;then
+  if kubectl get node --kubeconfig /etc/kubernetes/kubelet.conf ${node_name}|grep " Ready";then
     break
   fi
 done
