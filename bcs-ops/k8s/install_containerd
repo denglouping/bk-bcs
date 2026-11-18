@@ -70,15 +70,30 @@ _yum_containerd() {
   yum clean all
   yum makecache fast 2>/dev/null|| yum makecache
 
-  local pkg_pat pkg_ver
+  local pkg_pat pkg_ver candidates
   pkg_pat="${CONTAINERD_VER//-/.*}.*el"
-  pkg_ver="$(yum list containerd.io --showduplicates \
-    | awk '/'"$pkg_pat"'/{last=$2} END{sub(/.*:/,"",last);print last}')"
-  [[ -n $pkg_ver ]] \
-    || utils::log "ERROR" "${CONTAINERD_VER} not found amongst yum list results"
+  candidates=$(yum list containerd.io --showduplicates 2>/dev/null \
+    | awk '/^containerd.io/{print $2}' | sort -uV -r) || true
 
-  yum -y install containerd.io-"$pkg_ver" \
-    || utils::log "ERROR" "fail to yum install containerd"
+  pkg_ver=$(printf '%s\n' "$candidates" | grep -m1 -- "$pkg_pat" || true)
+  if [[ -n $pkg_ver ]]; then
+    utils::log "INFO" "found containerd.io-${pkg_ver#*:} matching configured ${CONTAINERD_VER}"
+  else
+    pkg_ver=$(printf '%s\n' "$candidates" | head -n1)
+    if [[ -z $pkg_ver ]]; then
+      utils::log "ERROR" "containerd.io not found amongst yum list results"
+      return 1
+    fi
+    utils::log "WARN" "configured containerd ${CONTAINERD_VER} not found in yum repo, fallback to newest: containerd.io-${pkg_ver#*:}"
+  fi
+  pkg_ver="${pkg_ver#*:}"
+
+  if yum -y install "containerd.io-$pkg_ver"; then
+    utils::log "OK" "containerd.io-$pkg_ver installed"
+  else
+    utils::log "ERROR" "fail to yum install containerd.io-$pkg_ver"
+    return 1
+  fi
   "${ROOT_DIR}"/k8s/operate_completion ctr
   return 0
 }

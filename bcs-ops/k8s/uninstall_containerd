@@ -18,4 +18,5 @@ if [[ -n ${BCS_OFFLINE:-} ]]; then
   true
 else
   yum remove -y containerd
+  rm -rf /etc/containerd /opt/containerd
 fi

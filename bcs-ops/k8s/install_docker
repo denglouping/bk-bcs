@@ -73,19 +73,46 @@ _yum_docker() {
   [[ ! -f /etc/yum.repos.d/tlinux-docker-ce.repo ]] || mv /etc/yum.repos.d/tlinux-docker-ce.repo /etc/yum.repos.d/tlinux-docker-ce.repo.bak
   yum makecache fast 2>/dev/null|| yum makecache
 
-  local pkg_pat pkg_ver
+  local pkg_pat pkg_ver cli_pkg_ver candidates cli_candidates
   pkg_pat="$(sed -e 's/-ce-/\\\\.ce.*/g' -e 's/-/.*/g' \
     <<<"${DOCKER_VER}").*el"
-  pkg_ver=$(yum list --showduplicates 'docker-ce' \
-    | awk '/'"$pkg_pat"'/{last=$2} END{sub(/.*:/,"",last);print last}')
-  [[ -n $pkg_ver ]] \
-    || utils::log "ERROR" "$DOCKER_VER not found amongst yum list results"
-  cli_pkg_ver=$(yum list --showduplicates 'docker-ce-cli' \
-    | awk '/'"$pkg_pat"'/{last=$2} END{sub(/.*:/,"",last);print last}')
 
-  yum -y install docker-ce-cli-"$cli_pkg_ver" \
-    docker-ce-"$pkg_ver" containerd.io \
-    || utils::log "ERROR" "fail to yum install docker"
+  candidates=$(yum list --showduplicates 'docker-ce' 2>/dev/null \
+    | awk '/^docker-ce\./{print $2}' | sort -uV -r) || true
+  pkg_ver=$(printf '%s\n' "$candidates" | grep -m1 -- "$pkg_pat" || true)
+  if [[ -n $pkg_ver ]]; then
+    utils::log "INFO" "found docker-ce-${pkg_ver#*:} matching configured ${DOCKER_VER}"
+  else
+    pkg_ver=$(printf '%s\n' "$candidates" | head -n1)
+    if [[ -z $pkg_ver ]]; then
+      utils::log "ERROR" "docker-ce not found amongst yum list results"
+      return 1
+    fi
+    utils::log "WARN" "configured docker ${DOCKER_VER} not found in yum repo, fallback to newest: docker-ce-${pkg_ver#*:}"
+  fi
+  pkg_ver="${pkg_ver#*:}"
+
+  cli_candidates=$(yum list --showduplicates 'docker-ce-cli' 2>/dev/null \
+    | awk '/^docker-ce-cli\./{print $2}' | sort -uV -r) || true
+  cli_pkg_ver=$(printf '%s\n' "$cli_candidates" | grep -m1 -- "$pkg_pat" || true)
+  if [[ -n $cli_pkg_ver ]]; then
+    cli_pkg_ver="${cli_pkg_ver#*:}"
+  else
+    cli_pkg_ver=$(printf '%s\n' "$cli_candidates" | head -n1 | sed 's/^[0-9]*://')
+    if [[ -z $cli_pkg_ver ]]; then
+      utils::log "ERROR" "docker-ce-cli not found amongst yum list results"
+      return 1
+    fi
+    utils::log "WARN" "docker-ce-cli matching ${DOCKER_VER} not found, fallback to newest: docker-ce-cli-${cli_pkg_ver}"
+  fi
+
+  if yum -y install "docker-ce-cli-$cli_pkg_ver" \
+    "docker-ce-$pkg_ver" containerd.io; then
+    utils::log "OK" "docker-ce-$pkg_ver installed"
+  else
+    utils::log "ERROR" "fail to yum install docker"
+    return 1
+  fi
   return 0
 }
 
